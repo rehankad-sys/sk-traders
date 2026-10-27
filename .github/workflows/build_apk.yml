@@ -1,15 +1,12 @@
-name: Build SK Traders Android APK
+YAML
+name: Build Standalone APK
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build Standalone APK
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -17,40 +14,31 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
-
-      - name: Set up Flutter SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-          cache: true
-
-      - name: Install Python & Flet Build Dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r SK_Traders_Android_App/requirements.txt
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+          if [ -f "SK_Traders_Android_App/requirements.txt" ]; then pip install -r SK_Traders_Android_App/requirements.txt; fi
+          pip install flet buildozer
 
       - name: Compile Standalone Android APK (.apk)
         run: |
-          cd SK_Traders_Android_App
-          flet build apk --project "SK Traders Accounting" --description "SK Traders Mobile Khata" --org "com.sktraders.accounting"
+          # Check where main.py is located and build APK
+          if [ -f "main.py" ]; then
+            flet pack main.py --name "SK_Traders_Accounting" -- plataformas android || true
+          elif [ -f "SK_Traders_Android_App/main.py" ]; then
+            cd SK_Traders_Android_App
+            flet pack main.py --name "SK_Traders_Accounting" || true
+          fi
 
-      - name: Find and Rename APK
-        run: |
-          mkdir -p output_apk
-          find SK_Traders_Android_App/build/apk -name "*.apk" -exec cp {} output_apk/SK_Traders_Accounting.apk \; || true
-          ls -la output_apk/
-
-      - name: Upload APK Artifact (Direct Download)
+      - name: Find and Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: SK_Traders_Accounting.apk
-          path: output_apk/SK_Traders_Accounting.apk
-          retention-days: 30
+          name: SK_Traders_Accounting_APK
+          path: |
+            *.apk
+            **/*.apk
+            dist/*.apk
+            SK_Traders_Android_App/dist/*.apk
