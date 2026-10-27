@@ -1,0 +1,15 @@
+[app]
+name = "SK Traders Accounting"
+org = "com.sktraders.accounting"
+version = "1.0.0"
+description = "SK Traders Mobile Khata Accounting Software"
+
+[android]
+package = "com.sktraders.accounting"
+version_code = 1
+permissions = [
+    "android.permission.RECORD_AUDIO",
+    "android.permission.INTERNET",
+    "android.permission.WRITE_EXTERNAL_STORAGE",
+    "android.permission.READ_EXTERNAL_STORAGE"
+]

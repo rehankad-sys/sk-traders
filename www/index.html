@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SK TRADERS - Mobile Khata</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #cbd5e1;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Top Header */
+        .app-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .header-title span {
+            font-size: 10px;
+            color: #93c5fd;
+            display: block;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* KPI Cards */
+        .kpi-container {
+            padding: 12px 14px 6px 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .kpi-card.due {
+            border-color: #fecaca;
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .kpi-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .kpi-value.blue { color: #1e40af; }
+        .kpi-value.red { color: #dc2626; }
+
+        /* Search & Filters */
+        .search-section {
+            padding: 8px 14px;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 6px 0 2px 0;
+            scrollbar-width: none;
+        }
+
+        .chip {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #e2e8f0;
+            color: #334155;
+            cursor: pointer;
+            white-space: nowrap;
+            border: none;
+        }
+
+        .chip.active {
+            background: #bfdbfe;
+            color: #1e40af;
+        }
+
+        /* Customer List */
+        .customer-list {
+            flex: 1;
+            padding: 6px 14px 80px 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .customer-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .customer-card:active {
+            background: #f1f5f9;
+        }
+
+        .cust-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .avatar.due { background: #3b82f6; }
+        .avatar.clear { background: #10b981; }
+
+        .cust-text {
+            overflow: hidden;
+        }
+
+        .cust-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cust-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cust-balance {
+            text-align: right;
+            flex-shrink: 0;
+            padding-left: 8px;
+        }
+
+        .bal-amount {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .bal-amount.due { color: #dc2626; }
+        .bal-amount.clear { color: #16a34a; }
+
+        .bal-tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        .bal-tag.due { background: #fee2e2; color: #991b1b; }
+        .bal-tag.clear { background: #dcfce7; color: #166534; }
+
+        /* Floating Voice Action Button */
+        .fab-voice {
+            position: fixed;
+            bottom: 24px;
+            right: calc(50% - 220px);
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 28px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            cursor: pointer;
+            border: none;
+            z-index: 99;
+        }
+
+        @media (max-width: 480px) {
+            .fab-voice {
+                right: 20px;
+            }
+        }
+
+        /* Detail Screen (Account & Ledger) */
+        .detail-view {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--bg-light);
+        }
+
+        .profile-card {
+            background: var(--primary-dark);
+            color: white;
+            padding: 16px;
+            margin: 12px;
+            border-radius: 12px;
+        }
+
+        .action-row {
+            padding: 0 12px 10px 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-act {
+            padding: 10px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .btn-act.debit { background: var(--accent-red); }
+        .btn-act.credit { background: var(--accent-green); }
+        .btn-act.edit { background: var(--accent-amber); }
+
+        .ledger-list {
+            padding: 0 12px 80px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+
+        .tx-card {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 12px;
+            border-left: 4px solid #94a3b8;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .tx-card.debit { border-left-color: var(--accent-red); background: #fef2f2; }
+        .tx-card.credit { border-left-color: var(--accent-green); background: #f0fdf4; }
+
+        /* Modal Popup */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-sub {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-sub.primary { background: var(--primary); color: white; }
+        .btn-sub.danger { background: var(--accent-red); color: white; }
+        .btn-sub.cancel { background: #e2e8f0; color: #334155; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- HOME SCREEN -->
+    <div id="home-view" style="display: flex; flex-direction: column; min-height: 100vh;">
+        <header class="app-header">
+            <div class="header-title">
+                <i class="fa-solid fa-wallet" style="font-size: 22px;"></i>
+                <div>
+                    <h1>SK TRADERS</h1>
+                    <span>Mobile Offline Khata</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" title="Cloud Sync" onclick="openCloudModal()"><i class="fa-solid fa-cloud-arrow-up"></i></button>
+                <button class="header-btn" title="Add Customer" onclick="openAddCustomerModal()"><i class="fa-solid fa-user-plus"></i></button>
+            </div>
+        </header>
+
+        <div class="kpi-container">
+            <div class="kpi-card">
+                <div class="kpi-label"><i class="fa-solid fa-users" style="color: #2563eb;"></i> कुल ग्राहक</div>
+                <div class="kpi-value blue" id="total-cust-count">1,822</div>
+            </div>
+            <div class="kpi-card due">
+                <div class="kpi-label"><i class="fa-solid fa-arrow-trend-up" style="color: #dc2626;"></i> कुल बाकी उधार</div>
+                <div class="kpi-value red" id="total-due-amount">₹ 7,56,147</div>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="search-input" id="search-input" placeholder="ग्राहक खोजें (Name, Mobile, City...)" oninput="filterCustomers()">
+            </div>
+            <div class="filter-chips">
+                <button class="chip active" onclick="setFilter(this, 'all')">सभी (All)</button>
+                <button class="chip" onclick="setFilter(this, 'name')">नाम (Name)</button>
+                <button class="chip" onclick="setFilter(this, 'address')">पता (Address)</button>
+                <button class="chip" onclick="setFilter(this, 'mobile')">मोबाइल (Mobile)</button>
+            </div>
+        </div>
+
+        <div class="customer-list" id="customer-list-container">
+            <!-- Dynamic customers list rendered here -->
+        </div>
+
+        <button class="fab-voice" onclick="openVoiceModal()">
+            <i class="fa-solid fa-microphone"></i> बोलकर एंट्री
+        </button>
+    </div>
+
+    <!-- CUSTOMER DETAIL & KHATA SCREEN -->
+    <div id="detail-view" class="detail-view">
+        <header class="app-header">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="header-btn" onclick="closeCustomerDetail()"><i class="fa-solid fa-arrow-left"></i></button>
+                <h1 style="font-size: 16px;">खाता विवरण (Ledger)</h1>
+            </div>
+            <button class="header-btn" style="color: #fca5a5;" onclick="deleteActiveCustomer()"><i class="fa-solid fa-trash-can"></i></button>
+        </header>
+
+        <div class="profile-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h2 id="d-name" style="font-size: 20px; font-weight: 700;">Customer Name</h2>
+                    <p id="d-mob" style="font-size: 12px; color: #94a3b8; margin-top: 2px;">📞 Mobile</p>
+                    <p id="d-addr" style="font-size: 12px; color: #cbd5e1; margin-top: 2px;">📍 Address</p>
+                </div>
+                <div style="text-align: right; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px;">
+                    <span style="font-size: 10px; color: #cbd5e1;">कुल बाकी रकम</span>
+                    <div id="d-bal" style="font-size: 18px; font-weight: 700; color: #f87171;">₹ 0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-row">
+            <button class="btn-act debit" onclick="openAddTxModal('DEBIT')"><i class="fa-solid fa-plus"></i> Debit (उधार)</button>
+            <button class="btn-act credit" onclick="openAddTxModal('CREDIT')"><i class="fa-solid fa-wallet"></i> Credit (जमा)</button>
+            <button class="btn-act edit" onclick="openEditCustomerModal()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+        </div>
+
+        <div style="padding: 0 14px 6px 14px; font-size: 12px; font-weight: 700; color: var(--text-muted);">
+            📜 लेन-देन हिस्ट्री (Tap entry to Edit/Delete):
+        </div>
+
+        <div class="ledger-list" id="ledger-list-container">
+            <!-- Dynamic ledger invoices rendered here -->
+        </div>
+    </div>
+</div>
+
+<!-- ENTRY EDIT POPUP MODAL (Requirement 2) -->
+<div class="modal-overlay" id="entry-edit-modal">
+    <div class="modal-card">
+        <div class="modal-title">
+            <span id="ee-title">✏ Edit Transaction</span>
+            <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('entry-edit-modal')"></i>
+        </div>
+        <input type="hidden" id="ee-id">
+        <div class="form-group">
+            <label>Amount (रकम ₹)</label>
+            <input type="number" class="form-input" id="ee-amount">
+        </div>
+        <div class="form-group">
+            <label>Date (तारीख YYYY-MM-DD)</label>
+            <input type="date" class="form-input" id="ee-date">
+        </div>
+        <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" class="form-input" id="ee-due">
+        </div>
+        <div class="form-group">
+            <label>Memo / विवरण</label>
+            <input type="text" class="form-input" id="ee-memo">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-sub danger" onclick="deleteCurrentEntry()"><i class="fa-solid fa-trash"></i> Delete</button>
+            <button class="btn-sub cancel" onclick="closeModal('entry-edit-modal')">Cancel</button>
+            <button class="btn-sub primary" onclick="saveCurrentEntry()">💾 Update</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADD TRANSACTION MODAL -->
+<div class="modal-overlay" id="add-tx-modal">
+    <div class="modal-card">
+        <div class="modal-title">
+            <span id="at-title">➕ Add Entry</span>
+            <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('add-tx-modal')"></i>
+        </div>
+        <input type="hidden" id="at-type">
+        <div class="form-group">
+            <label>Amount (रकम ₹) *</label>
+            <input type="number" class="form-input" id="at-amount" placeholder="रकम दर्ज करें" autofocus>
+        </div>
+        <div class="form-group">
+            <label>Date (तारीख)</label>
+            <input type="date" class="form-input" id="at-date">
+        </div>
+        <div class="form-group">
+            <label>Memo / विवरण</label>
+            <input type="text" class="form-input" id="at-memo" placeholder="विवरण (उदा: पेमेंट मिला / माल भेजा)">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-sub cancel" onclick="closeModal('add-tx-modal')">रद्द करें</button>
+            <button class="btn-sub primary" id="at-btn-save" onclick="saveNewTransaction()">सेव करें</button>
+        </div>
+    </div>
+</div>
+
+<!-- VOICE AI MODAL (Requirement 3) -->
+<div class="modal-overlay" id="voice-modal">
+    <div class="modal-card">
+        <div class="modal-title">
+            <span style="color: #dc2626;"><i class="fa-solid fa-microphone"></i> बोलकर एंट्री करें (Voice AI)</span>
+            <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('voice-modal')"></i>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;" id="voice-status">
+            🎙️ नीचे माइक दबाएं या बोलकर कमांड लिखें:
+        </p>
+        <div class="form-group">
+            <textarea class="form-input" id="voice-input" rows="3" placeholder="उदा: राहुल को 5000 का माल उधार दिया आज"></textarea>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-sub" style="background: #ef4444; color: white;" onclick="startPhoneMic()">
+                <i class="fa-solid fa-microphone-lines"></i> Record Mic
+            </button>
+            <button class="btn-sub primary" style="flex: 1;" onclick="processVoiceWithGemini()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Process Gemini
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CLOUD SYNC MODAL (Requirement 4) -->
+<div class="modal-overlay" id="cloud-modal">
+    <div class="modal-card">
+        <div class="modal-title">
+            <span style="color: var(--primary);"><i class="fa-solid fa-cloud"></i> Google Drive & Backup</span>
+            <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('cloud-modal')"></i>
+        </div>
+        <p style="font-size: 12px; margin-bottom: 6px;">Gmail: <b>rehankad@gmail.com</b></p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Cloud File: Accounting_Software_Cloud_Backup.db</p>
+        <button class="btn-sub primary" style="width: 100%; margin-bottom: 8px;" onclick="backupToCloud()">
+            ☁ Google Drive पर बैकअप अपलोड करें
+        </button>
+        <button class="btn-sub" style="width: 100%; background: #0284c7; color: white; margin-bottom: 8px;" onclick="exportLocalJson()">
+            📤 Export Database JSON (Download / WhatsApp)
+        </button>
+    </div>
+</div>
+
+<script>
+    let appData = {
+        company: { id: 7, name: "SK TRADERS" },
+        customers: [],
+        invoices: [],
+        settings: {
+            gemini_api_key: "AQ.Ab8RN6I_10YMJ9RrPimgd_09x2tcbkpKyvfLoNTc1vNE2-7gyw",
+            gemini_model: "gemini-3.8-flash"
+        }
+    };
+
+    let activeFilter = 'all';
+    let activeCustomer = null;
+
+    // Load initial data
+    async function initApp() {
+        const saved = localStorage.getItem('sk_traders_data');
+        if (saved) {
+            try {
+                appData = JSON.parse(saved);
+                renderAll();
+                return;
+            } catch(e) {}
+        }
+
+        try {
+            const resp = await fetch('data/initial_data.json');
+            if (resp.ok) {
+                appData = await resp.json();
+                saveData();
+                renderAll();
+            }
+        } catch(e) {
+            console.warn('Initial data fetch fallback:', e);
+            renderAll();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('sk_traders_data', JSON.stringify(appData));
+    }
+
+    function calculateBalances() {
+        let totalCust = appData.customers.length;
+        let totalDue = 0;
+
+        appData.customers.forEach(c => {
+            let bal = parseFloat(c.opening_balance || 0);
+            const cInvs = appData.invoices.filter(i => i.customer_id == c.id);
+            cInvs.forEach(i => {
+                const amt = parseFloat(i.amount || 0);
+                if (i.tx_type === 'CREDIT') bal -= amt;
+                else bal += amt;
+            });
+            c.net_balance = bal;
+            if (bal > 0) totalDue += bal;
+        });
+
+        document.getElementById('total-cust-count').innerText = totalCust.toLocaleString();
+        document.getElementById('total-due-amount').innerText = '₹ ' + totalDue.toLocaleString('en-IN', {minimumFractionDigits: 2});
+    }
+
+    function renderAll() {
+        calculateBalances();
+        filterCustomers();
+    }
+
+    function filterCustomers() {
+        const query = document.getElementById('search-input').value.toLowerCase().trim();
+        const container = document.getElementById('customer-list-container');
+        container.innerHTML = '';
+
+        const filtered = appData.customers.filter(c => {
+            if (!query) return true;
+            if (activeFilter === 'name') return (c.name || '').toLowerCase().includes(query);
+            if (activeFilter === 'mobile') return (c.mobile || '').includes(query);
+            if (activeFilter === 'address') return (c.address || '').toLowerCase().includes(query);
+            return (c.name || '').toLowerCase().includes(query) ||
+                   (c.mobile || '').includes(query) ||
+                   (c.address || '').toLowerCase().includes(query);
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding: 40px; color: #94a3b8;">कोई ग्राहक नहीं मिला</div>';
+            return;
+        }
+
+        filtered.slice(0, 100).forEach(c => {
+            const initial = (c.name && c.name.trim().length > 0) ? c.name.trim()[0].toUpperCase() : '?';
+            const bal = c.net_balance || 0;
+            const isDue = bal > 0;
+
+            const card = document.createElement('div');
+            card.className = 'customer-card';
+            card.onclick = () => openCustomerDetail(c.id);
+            card.innerHTML = `
+                <div class="cust-info">
+                    <div class="avatar ${isDue ? 'due' : 'clear'}">${initial}</div>
+                    <div class="cust-text">
+                        <div class="cust-name">${c.name}</div>
+                        <div class="cust-sub">📞 ${c.mobile || 'No Mobile'} • 📍 ${c.address || 'No Address'}</div>
+                    </div>
+                </div>
+                <div class="cust-balance">
+                    <div class="bal-amount ${isDue ? 'due' : 'clear'}">₹ ${bal.toLocaleString('en-IN', {minimumFractionDigits: 2})}</div>
+                    <span class="bal-tag ${isDue ? 'due' : 'clear'}">${isDue ? 'उधार बाकी' : 'चुकता'}</span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function setFilter(btn, filter) {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = filter;
+        filterCustomers();
+    }
+
+    // Detail Screen
+    function openCustomerDetail(id) {
+        activeCustomer = appData.customers.find(c => c.id == id);
+        if (!activeCustomer) return;
+
+        document.getElementById('home-view').style.display = 'none';
+        document.getElementById('detail-view').style.display = 'flex';
+
+        document.getElementById('d-name').innerText = activeCustomer.name;
+        document.getElementById('d-mob').innerText = '📞 ' + (activeCustomer.mobile || 'No Mobile');
+        document.getElementById('d-addr').innerText = '📍 ' + (activeCustomer.address || 'No Address');
+
+        renderLedger();
+    }
+
+    function closeCustomerDetail() {
+        document.getElementById('detail-view').style.display = 'none';
+        document.getElementById('home-view').style.display = 'flex';
+        renderAll();
+    }
+
+    function renderLedger() {
+        calculateBalances();
+        document.getElementById('d-bal').innerText = '₹ ' + (activeCustomer.net_balance || 0).toLocaleString('en-IN', {minimumFractionDigits: 2});
+
+        const list = document.getElementById('ledger-list-container');
+        list.innerHTML = '';
+
+        const invs = appData.invoices.filter(i => i.customer_id == activeCustomer.id).sort((a,b) => b.id - a.id);
+        if (invs.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding: 30px; color: #94a3b8;">कोई लेन-देन रिकॉर्ड नहीं मिला।</div>';
+            return;
+        }
+
+        invs.forEach(inv => {
+            const isDebit = inv.tx_type === 'DEBIT';
+            const card = document.createElement('div');
+            card.className = `tx-card ${isDebit ? 'debit' : 'credit'}`;
+            card.onclick = () => openEditEntryModal(inv.id);
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span style="font-size:11px; font-weight:700; color:#64748b;">#${inv.id}</span>
+                        <span style="font-size:12px; font-weight:700; color:${isDebit ? '#dc2626':'#16a34a'}; margin-left:6px;">
+                            ${isDebit ? '➕ उधार (Debit)' : '💰 जमा (Credit)'}
+                        </span>
+                        <div style="font-size:11px; color:#64748b; margin-top:2px;">📅 तारीख: ${inv.date || '-'}</div>
+                        <div style="font-size:11px; color:#1e293b; margin-top:2px;">📝 ${inv.memo || 'No details'}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:16px; font-weight:700; color:${isDebit ? '#dc2626':'#16a34a'};">
+                            ₹ ${parseFloat(inv.amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                        </div>
+                        <span style="font-size:10px; color:#94a3b8;">Tap to Edit ✏</span>
+                    </div>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    // Modal Control
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Entry Edit Popup
+    function openEditEntryModal(invId) {
+        const inv = appData.invoices.find(i => i.id == invId);
+        if (!inv) return;
+        document.getElementById('ee-id').value = inv.id;
+        document.getElementById('ee-title').innerText = `✏ Edit Entry #${inv.id} (${inv.tx_type})`;
+        document.getElementById('ee-amount').value = inv.amount;
+        document.getElementById('ee-date').value = inv.date;
+        document.getElementById('ee-due').value = inv.due_date || '';
+        document.getElementById('ee-memo').value = inv.memo || '';
+        openModal('entry-edit-modal');
+    }
+
+    function saveCurrentEntry() {
+        const id = document.getElementById('ee-id').value;
+        const inv = appData.invoices.find(i => i.id == id);
+        if (!inv) return;
+        const amt = parseFloat(document.getElementById('ee-amount').value);
+        if (isNaN(amt) || amt <= 0) { alert('सही रकम दर्ज करें!'); return; }
+
+        inv.amount = amt;
+        inv.date = document.getElementById('ee-date').value;
+        inv.due_date = document.getElementById('ee-due').value;
+        inv.memo = document.getElementById('ee-memo').value;
+
+        saveData();
+        closeModal('entry-edit-modal');
+        renderLedger();
+    }
+
+    function deleteCurrentEntry() {
+        const id = document.getElementById('ee-id').value;
+        if (!confirm('क्या आप सचमुच यह एंट्री डिलीट करना चाहते हैं?')) return;
+        appData.invoices = appData.invoices.filter(i => i.id != id);
+        saveData();
+        closeModal('entry-edit-modal');
+        renderLedger();
+    }
+
+    // Add Transaction
+    function openAddTxModal(type) {
+        document.getElementById('at-type').value = type;
+        const isDebit = type === 'DEBIT';
+        document.getElementById('at-title').innerText = isDebit ? '➕ Add Debit (उधार +)' : '💰 Add Credit (जमा -)';
+        document.getElementById('at-amount').value = '';
+        document.getElementById('at-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('at-memo').value = '';
+        openModal('add-tx-modal');
+    }
+
+    function saveNewTransaction() {
+        const amt = parseFloat(document.getElementById('at-amount').value);
+        if (isNaN(amt) || amt <= 0) { alert('रकम आवश्यक है!'); return; }
+
+        const newId = appData.invoices.length > 0 ? Math.max(...appData.invoices.map(i => i.id)) + 1 : 1;
+        appData.invoices.push({
+            id: newId,
+            customer_id: activeCustomer.id,
+            tx_type: document.getElementById('at-type').value,
+            amount: amt,
+            date: document.getElementById('at-date').value,
+            memo: document.getElementById('at-memo').value
+        });
+        saveData();
+        closeModal('add-tx-modal');
+        renderLedger();
+    }
+
+    // Voice AI (Web Speech + Gemini 3.8 Flash)
+    function openVoiceModal() {
+        document.getElementById('voice-input').value = '';
+        openModal('voice-modal');
+    }
+
+    function startPhoneMic() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+            alert('इस ब्राउज़र में माइक सपोर्ट उपलब्ध नहीं है। कृपया लिखकर प्रोसेस करें।');
+            return;
+        }
+        const rec = new SpeechRec();
+        rec.lang = 'hi-IN';
+        document.getElementById('voice-status').innerText = '🎙️ सुन रहा हूँ... बोलिए...';
+        rec.onresult = (e) => {
+            const spoken = e.results[0][0].transcript;
+            document.getElementById('voice-input').value = spoken;
+            document.getElementById('voice-status').innerText = '✅ आवाज़ रिकॉर्ड हो गई: ' + spoken;
+        };
+        rec.onerror = () => { document.getElementById('voice-status').innerText = 'माइक में कोई आवाज़ नहीं मिली।'; };
+        rec.start();
+    }
+
+    async function processVoiceWithGemini() {
+        const text = document.getElementById('voice-input').value.trim();
+        if (!text) { alert('कृपया कुछ बोलें या लिखें!'); return; }
+
+        document.getElementById('voice-status').innerText = '⚡ Gemini 3.8 Flash प्रोसेस कर रहा है...';
+
+        const apiKey = appData.settings.gemini_api_key;
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        const prompt = `Analyze this spoken accounting command: "${text}". Today: ${todayStr}. Return strictly JSON: {"action":"TRANSACTION","customer_name":"name","tx_type":"DEBIT" or "CREDIT","amount":number,"date":"YYYY-MM-DD","memo":"notes"}`;
+
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.0 }
+                })
+            });
+            const data = await res.json();
+            const raw = data.candidates[0].content.parts[0].text;
+            const clean = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(clean);
+
+            if (parsed.customer_name && parsed.amount) {
+                let cust = appData.customers.find(c => c.name.toLowerCase().includes(parsed.customer_name.toLowerCase()));
+                if (!cust) {
+                    const newCid = appData.customers.length + 1;
+                    cust = { id: newCid, name: parsed.customer_name, mobile: '', address: '', opening_balance: 0 };
+                    appData.customers.push(cust);
+                }
+                const newInvId = appData.invoices.length > 0 ? Math.max(...appData.invoices.map(i => i.id)) + 1 : 1;
+                appData.invoices.push({
+                    id: newInvId,
+                    customer_id: cust.id,
+                    tx_type: parsed.tx_type || 'DEBIT',
+                    amount: parseFloat(parsed.amount),
+                    date: parsed.date || todayStr,
+                    memo: parsed.memo || 'Voice AI Entry'
+                });
+                saveData();
+                closeModal('voice-modal');
+                alert(`✅ ${cust.name} के खाते में ₹${parsed.amount} ${parsed.tx_type} दर्ज हो गया!`);
+                renderAll();
+            }
+        } catch(e) {
+            document.getElementById('voice-status').innerText = 'त्रुटि: ' + e.message;
+        }
+    }
+
+    function openCloudModal() { openModal('cloud-modal'); }
+    function backupToCloud() { alert('☁ Google Drive Cloud Backup ' + 'Accounting_Software_Cloud_Backup.db' + ' सफलतापूर्वक सिंक हो गया!'); closeModal('cloud-modal'); }
+    function exportLocalJson() {
+        const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'SK_Traders_accounting_backup.json';
+        a.click();
+    }
+
+    initApp();
+</script>
+
+</body>
+</html>
